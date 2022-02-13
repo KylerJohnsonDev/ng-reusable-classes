@@ -1,6 +1,0 @@
-<main class=" p-4 grid gap-4 md:grid-cols-2 grid-cols-1" *ngIf="pokemon$ | async as pokemon; else loading">
-  <app-pokemon-card *ngFor="let summary of pokemon.pokemon" [pokemonSummary]="summary"></app-pokemon-card>
-</main>
-<ng-template #loading>
-  Loading...
-</ng-template>
