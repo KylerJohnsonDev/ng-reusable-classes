@@ -14,7 +14,7 @@ import { Pokemon } from '../models/pokemon.model';
   selector: 'app-pokemon-details',
   template: `
     <main
-      class="max-w-lg m-auto flex flex-col"
+      class="max-w-xl m-auto flex flex-col"
       *ngIf="pokemon$ | async as pokemon"
     >
       <h1 class="text-4xl text-center my-8 uppercase">
@@ -25,7 +25,7 @@ import { Pokemon } from '../models/pokemon.model';
         [src]="pokemon.sprites.other.dream_world.front_default"
         [alt]="pokemon.name"
       />
-      <article class="flex md:flex-col lg:inline-flex mt-2">
+      <article class="flex flex-col md:flex-row mt-2">
         <aside>
           <h1 class="text-2xl mb-2 font-bold">General Info</h1>
           <p class="mb-2">
@@ -50,17 +50,23 @@ import { Pokemon } from '../models/pokemon.model';
             </strong>
           </p>
         </aside>
-        <aside class="md:mt-2">
+        <aside class="mt-2 md:mt-0 md:ml-4 flex-1">
           <h1 class="text-2xl mb-2 font-bold">Stats</h1>
-          <div *ngFor="let stat of pokemon.stats">
-            <p class="mb-2">
-              {{ stat.stat.name }}: <strong>{{ stat.base_stat }}</strong>
-            </p>
+          <div class="grid gap-1 md:grid-cols-2 grid-cols-1">
+            <div class="mb-2" *ngFor="let stat of pokemon.stats">
+              <span class="capitalize"
+                >{{
+                  stat.stat.name.includes('special')
+                    ? stat.stat.name.replace('special-', 'sp. ')
+                    : stat.stat.name
+                }}:
+              </span>
+              <strong>{{ stat.base_stat }}</strong>
+            </div>
           </div>
         </aside>
       </article>
     </main>
-    <pre><code>{{ pokemon$ | async | json }}</code></pre>
   `,
 })
 export class PokemonDetailsComponent implements OnInit {
