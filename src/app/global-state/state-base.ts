@@ -1,16 +1,19 @@
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 /*
  * @class {StateService<T> StateService}
  */
-export abstract class StateService<T> {
+export abstract class StateServiceBase<T> {
   private stateSubject$ = new BehaviorSubject<T | null>(null);
 
   /*
    * @property {Observable<T>} state$ - state observable
+   * @description emits state. Will not emit until state has been set
    */
-  state$: Observable<T | null> = this.stateSubject$.asObservable();
+  state$: Observable<T | null> = this.stateSubject$
+    .asObservable()
+    .pipe(filter((state) => !!state));
 
   /*
    *  @function pluckStateProperty
@@ -24,7 +27,7 @@ export abstract class StateService<T> {
     return this.state$.pipe(
       filter((state) => !!state),
       map((state) => {
-        return state?.[propertyName] ?? null;
+        return (state?.[propertyName] as T[K]) ?? null;
       })
     );
   }
