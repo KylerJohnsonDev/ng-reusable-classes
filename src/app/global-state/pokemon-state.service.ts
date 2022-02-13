@@ -7,6 +7,7 @@ import {
   PokemonApiResult,
   PokemonSummary,
 } from '../models/api.model';
+import { Pokemon } from '../models/pokemon.model';
 import { StateServiceBase } from './state-base';
 
 export interface PokemonState {
@@ -57,6 +58,11 @@ export class PokemonStateService extends StateServiceBase<PokemonState> {
     return this.http.get<FetchPokemonApiResponse>(url);
   }
 
+  fetchPokemonById(id: string): Observable<Pokemon> {
+    const url = `${this.baseUrl}/pokemon/${id}`;
+    return this.http.get<Pokemon>(url);
+  }
+
   loadPokemon(
     paginationOptions?: PaginationOptions,
     paginationUrl?: string
@@ -78,7 +84,7 @@ export class PokemonStateService extends StateServiceBase<PokemonState> {
   }
 
   private formatPokemonResults(results: PokemonApiResult[]): PokemonSummary[] {
-    return results.map((result, index) => {
+    return results.map((result) => {
       const id = this.getPokemonIdFromResultUrl(result.url);
       const summary: PokemonSummary = {
         id,

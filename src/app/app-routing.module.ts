@@ -4,6 +4,13 @@ import { PokedexPageComponent } from './pages/pokedex.component';
 
 const routes: Routes = [
   { path: 'pokemon', component: PokedexPageComponent },
+  {
+    path: 'pokemon/details',
+    loadChildren: () =>
+      import('./pages/pokemon-details.component').then(
+        (m) => m.PokemonDetailsModule
+      ),
+  },
   { path: '', redirectTo: '/pokemon', pathMatch: 'full' },
   { path: '**', redirectTo: '/pokemon' },
 ];
