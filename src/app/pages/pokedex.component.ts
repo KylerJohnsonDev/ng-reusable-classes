@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { filter, Observable } from 'rxjs';
 import { PokemonCardModule } from 'src/app/components/pokemon-card.component';
 import {
   PokemonState,
@@ -23,7 +23,9 @@ import {
   `,
 })
 export class PokedexPageComponent implements OnInit {
-  pokemon$: Observable<PokemonState> = this.pokemonState.state$;
+  pokemon$: Observable<PokemonState | null> = this.pokemonState.state$.pipe(
+    filter((state) => !!state)
+  );
 
   constructor(private pokemonState: PokemonStateService) {}
 

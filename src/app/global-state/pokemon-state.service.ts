@@ -30,7 +30,7 @@ export const defaultState: PokemonState = {
 @Injectable({
   providedIn: 'root',
 })
-export class PokemonStateService extends StateServiceBase<any> {
+export class PokemonStateService extends StateServiceBase<PokemonState> {
   private readonly baseUrl = 'https://pokeapi.co/api/v2';
 
   constructor(private http: HttpClient) {
