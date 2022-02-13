@@ -35,7 +35,7 @@ import { Pokemon } from '../models/pokemon.model';
           <p class="mb-2">
             Type:
             <strong
-              class="bg-blue-600 text-white px-2 py-1 ml-1 rounded"
+              class="bg-blue-900 text-white px-2 py-1 ml-1 rounded"
               *ngFor="let type of pokemon.types"
               >{{ type.type.name }}</strong
             >
