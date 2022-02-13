@@ -11,7 +11,7 @@ export interface PokemonApiResult {
 }
 
 export interface PokemonSummary extends PokemonApiResult {
-  id: number;
+  id: string;
   imageUrl: string;
 }
 
