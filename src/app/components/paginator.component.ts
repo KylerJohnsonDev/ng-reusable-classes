@@ -11,7 +11,7 @@ import {
   selector: 'app-paginator',
   template: `
     <article class="flex flex-inline justify-end">
-      <span>Showing: {{ displayCount }}</span>
+      <span>Showing {{ displayCount }} of {{ totalCount }}</span>
       <span
         *ngIf="previousPageUrl"
         class="ml-4 underline text-blue-600 hover:cursor-pointer hover:font-bold"
@@ -29,6 +29,7 @@ import {
 })
 export class PaginatorComponent {
   @Input() displayCount!: number;
+  @Input() totalCount!: number;
   @Input() previousPageUrl!: string | null;
   @Input() nextPageUrl!: string | null;
 

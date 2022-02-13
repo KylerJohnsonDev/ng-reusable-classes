@@ -23,6 +23,7 @@ import { PaginatorModule } from '../components/paginator.component';
       </article>
       <app-paginator
         [displayCount]="pokemonState.pokemon?.length ?? 0"
+        [totalCount]="pokemonState.count ?? 0"
         [previousPageUrl]="pokemonState.previousPageUrl"
         [nextPageUrl]="pokemonState.nextPageUrl"
         (paginationChange)="onPaginationChange($event)"
