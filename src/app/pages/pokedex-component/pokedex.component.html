@@ -1,5 +1,5 @@
 <main class="p-4" *ngIf="pokemonState$ | async as pokemonState; else loading">
-  <app-generation-selection></app-generation-selection>
+  <!-- <app-generation-selection></app-generation-selection> -->
   <article class="grid gap-4 md:grid-cols-2 grid-cols-1 lg:grid-cols-3">
     <app-pokemon-card
       *ngFor="let summary of pokemonState.pokemon"
