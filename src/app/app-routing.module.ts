@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PageWrapperComponent } from './pages/page-wrapper.component';
-import { PokedexPageComponent } from './pages/pokedex.component';
+import { PageWrapperComponent } from './pages/page-wrapper/page-wrapper.component';
+import { PokedexPageComponent } from './pages/pokedex-component/pokedex.component';
 
 const routes: Routes = [
   {
@@ -12,7 +12,7 @@ const routes: Routes = [
       {
         path: 'pokemon/details',
         loadChildren: () =>
-          import('./pages/pokemon-details.component').then(
+          import('./pages/pokemon-details/pokemon-details.component').then(
             (m) => m.PokemonDetailsModule
           ),
       },

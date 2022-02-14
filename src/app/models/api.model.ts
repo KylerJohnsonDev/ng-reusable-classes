@@ -19,3 +19,8 @@ export interface PaginationOptions {
   limit?: number;
   offset?: number;
 }
+
+export interface GenerationOption {
+  description: string;
+  paginationOptions: PaginationOptions;
+}

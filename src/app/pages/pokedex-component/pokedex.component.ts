@@ -6,31 +6,12 @@ import {
   PokemonState,
   PokemonStateService,
 } from 'src/app/global-state/pokemon-state.service';
-import { PaginatorModule } from '../components/paginator.component';
+import { GenerationSelectionModule } from '../../components/generation-selection.component';
+import { PaginatorModule } from '../../components/paginator.component';
 
 @Component({
   selector: 'app-pokedex',
-  template: `
-    <main
-      class="p-4"
-      *ngIf="pokemonState$ | async as pokemonState; else loading"
-    >
-      <article class="grid gap-4 md:grid-cols-2 grid-cols-1">
-        <app-pokemon-card
-          *ngFor="let summary of pokemonState.pokemon"
-          [pokemonSummary]="summary"
-        ></app-pokemon-card>
-      </article>
-      <app-paginator
-        [displayCount]="pokemonState.pokemon?.length ?? 0"
-        [totalCount]="pokemonState.count ?? 0"
-        [previousPageUrl]="pokemonState.previousPageUrl"
-        [nextPageUrl]="pokemonState.nextPageUrl"
-        (paginationChange)="onPaginationChange($event)"
-      ></app-paginator>
-    </main>
-    <ng-template #loading> Loading... </ng-template>
-  `,
+  templateUrl: './pokedex.component.html',
 })
 export class PokedexPageComponent implements OnInit {
   pokemonState$: Observable<PokemonState | null> =
@@ -51,7 +32,12 @@ export class PokedexPageComponent implements OnInit {
 }
 
 @NgModule({
-  imports: [CommonModule, PokemonCardModule, PaginatorModule],
+  imports: [
+    CommonModule,
+    PokemonCardModule,
+    PaginatorModule,
+    GenerationSelectionModule,
+  ],
   declarations: [PokedexPageComponent],
   exports: [PokedexPageComponent],
 })
