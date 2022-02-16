@@ -2,7 +2,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { filter, map, tap } from 'rxjs/operators';
 
 export interface StateStoreConfiguration<T> {
-  initialState?: T;
+  initialState: T;
   debug?: boolean;
   verbose?: boolean;
 }
@@ -11,45 +11,36 @@ export interface StateStoreConfiguration<T> {
  * @class {StateService<T> StateService}
  */
 export abstract class StateStoreBase<T> {
-  private stateSubject$ = new BehaviorSubject<T | null>(null);
+  private stateSubject$!: BehaviorSubject<T>;
   private debug = false;
-  private initialState!: T;
+  private initialState: T;
   private verbose = false;
-
-  constructor(configuration?: StateStoreConfiguration<T>) {
-    if (configuration?.debug) this.debug = true;
-    if (configuration?.verbose) this.verbose = true;
-
-    if (configuration?.initialState) {
-      if (this.debug) {
-        this.log(
-          'Setting initial state in constructor',
-          configuration.initialState
-        );
-      }
-      this.initialState = configuration.initialState;
-      this.stateSubject$.next(configuration.initialState);
-    } else {
-      if (this.debug) {
-        const message =
-          'Warning: You did not pass initial state into the `super` constructor. State will be `null` until you explicitly use `setState`. It is recommended that you provide initial state in constructor.';
-        this.log(message, undefined, 'orangered');
-      }
-    }
-  }
 
   /*
    * @property {Observable<T>} state$ - state observable
    * @description emits state. Will not emit until state has been set
    */
-  state$: Observable<T | null> = this.stateSubject$.asObservable().pipe(
-    filter((state) => !!state),
-    tap((state) => {
-      if (this.debug) {
-        this.log('New state emission', state);
-      }
-    })
-  );
+  state$: Observable<T>;
+
+  constructor(configuration: StateStoreConfiguration<T>) {
+    if (configuration?.debug) this.debug = true;
+    if (configuration?.verbose) this.verbose = true;
+    if (this.debug) {
+      this.log(
+        'Setting initial state in constructor',
+        configuration.initialState
+      );
+    }
+    this.initialState = configuration.initialState;
+    this.stateSubject$ = new BehaviorSubject<T>(configuration.initialState);
+    this.state$ = this.stateSubject$.asObservable().pipe(
+      tap((state) => {
+        if (this.debug) {
+          this.log('New state emission', state);
+        }
+      })
+    );
+  }
 
   /*
    *  @function pluckStateProperty

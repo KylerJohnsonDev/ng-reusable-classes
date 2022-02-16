@@ -37,8 +37,8 @@ export const defaultState: PokemonState = {
 
 const storeConfiguration: StateStoreConfiguration<PokemonState> = {
   initialState: defaultState,
-  debug: true,
-  verbose: true,
+  // debug: true,
+  // verbose: true,
 };
 
 @Injectable({
