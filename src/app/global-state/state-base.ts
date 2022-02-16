@@ -1,19 +1,49 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, tap } from 'rxjs/operators';
+
+export interface StateStoreConfiguration<T> {
+  initialState?: T;
+  debug?: boolean;
+  verbose?: boolean;
+}
 
 /*
  * @class {StateService<T> StateService}
  */
-export abstract class StateServiceBase<T> {
+export abstract class StateStoreBase<T> {
   private stateSubject$ = new BehaviorSubject<T | null>(null);
+  private debug = false;
+  private initialState!: T;
+  private verbose = false;
+
+  constructor(configuration?: StateStoreConfiguration<T>) {
+    if (configuration?.debug) this.debug = true;
+    if (configuration?.verbose) this.verbose = true;
+
+    if (configuration?.initialState) {
+      if (this.debug) {
+        this.log(
+          'Setting initial state in constructor',
+          configuration.initialState
+        );
+      }
+      this.initialState = configuration.initialState;
+      this.stateSubject$.next(configuration.initialState);
+    }
+  }
 
   /*
    * @property {Observable<T>} state$ - state observable
    * @description emits state. Will not emit until state has been set
    */
-  state$: Observable<T | null> = this.stateSubject$
-    .asObservable()
-    .pipe(filter((state) => !!state));
+  state$: Observable<T | null> = this.stateSubject$.asObservable().pipe(
+    filter((state) => !!state),
+    tap((state) => {
+      if (this.debug) {
+        this.log('New state emission', state);
+      }
+    })
+  );
 
   /*
    *  @function pluckStateProperty
@@ -41,6 +71,14 @@ export abstract class StateServiceBase<T> {
     const currentState = this.stateSubject$.value;
     const newState = { ...currentState, ...state } as T;
     this.stateSubject$.next(newState);
+    if (this.debug) {
+      const message = 'State updated';
+      if (this.verbose) {
+        this.logStateDiff(message, currentState, newState);
+      } else {
+        this.log(message);
+      }
+    }
   }
 
   /*
@@ -56,13 +94,58 @@ export abstract class StateServiceBase<T> {
 
   /*
    *  @function resetState
-   *  @description resets state to null
+   *  @description resets state to initial state value
    */
   protected resetState(): void {
-    this.stateSubject$.next(null);
+    this.stateSubject$.next(this.initialState);
+    if (this.debug) {
+      this.log(
+        'State reset to initial state value passed into the constructor',
+        this.initialState
+      );
+    }
   }
 
   protected endStateObservation(): void {
     this.stateSubject$.complete();
+    if (this.debug) {
+      this.log('State subject has completed.');
+    }
+  }
+
+  private log(message: string, object?: any, color?: string): void {
+    let coloredMessage = `%c${message}`;
+    if (object && this.verbose) {
+      const stringifiedObject = JSON.stringify(object, null, 2);
+      coloredMessage += `\n${stringifiedObject}`;
+    }
+    console.log(coloredMessage, `color: ${color ? color : 'green'}`);
+  }
+
+  private logStateDiff(
+    message: string,
+    oldState: T | null,
+    newState: T,
+    color?: string
+  ): void {
+    let formattedMessage = `%c${message}`;
+    if (oldState && newState) {
+      const stateKeys = Object.keys(oldState);
+      stateKeys.forEach((key) => {
+        const oldPropValue = oldState[key as keyof T];
+        const newPropValue = newState[key as keyof T];
+        const isUpdated = oldPropValue !== newPropValue;
+        if (isUpdated) {
+          formattedMessage += `\n${key}: ${JSON.stringify(
+            oldPropValue
+          )} --> ${JSON.stringify(newPropValue)}`;
+        }
+      });
+    } else {
+      formattedMessage += `\nOld State: ${JSON.stringify(
+        oldState
+      )}\nNew State: ${JSON.stringify(newState)}`;
+    }
+    console.log(formattedMessage, `color: ${color ? color : 'orangered'}`);
   }
 }

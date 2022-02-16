@@ -4,12 +4,12 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { PokemonStateService } from './global-state/pokemon-state.service';
+import { PokemonStore } from './global-state/pokemon.store';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, AppRoutingModule, HttpClientModule],
-  providers: [PokemonStateService],
+  providers: [PokemonStore],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

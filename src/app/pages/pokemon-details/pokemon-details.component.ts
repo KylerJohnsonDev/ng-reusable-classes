@@ -6,8 +6,8 @@ import {
   RouterModule,
   Routes,
 } from '@angular/router';
-import { catchError, Observable, of, switchMap, tap } from 'rxjs';
-import { PokemonStateService } from '../../global-state/pokemon-state.service';
+import { catchError, Observable, of, switchMap } from 'rxjs';
+import { PokemonService } from 'src/app/http/pokemon.service';
 import { Pokemon } from '../../models/pokemon.model';
 
 @Component({
@@ -19,7 +19,7 @@ export class PokemonDetailsComponent implements OnInit {
   pokemon$: Observable<Pokemon | null> = this.route.paramMap.pipe(
     switchMap((paramMap: ParamMap) => {
       const id = paramMap.get('id');
-      return this.pokemonState.fetchPokemonById(id as string);
+      return this.pokemonService.fetchPokemonById(id as string);
     }),
     catchError((error) => {
       this.errorMessage = error.errorMessage;
@@ -30,7 +30,7 @@ export class PokemonDetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private pokemonState: PokemonStateService
+    private pokemonService: PokemonService
   ) {}
 
   ngOnInit(): void {}

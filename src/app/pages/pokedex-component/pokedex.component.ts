@@ -2,10 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, NgModule, OnInit } from '@angular/core';
 import { filter, Observable, tap } from 'rxjs';
 import { PokemonCardModule } from 'src/app/components/pokemon-card.component';
-import {
-  PokemonState,
-  PokemonStateService,
-} from 'src/app/global-state/pokemon-state.service';
+import { PokemonState, PokemonStore } from 'src/app/global-state/pokemon.store';
 import { GenerationSelectionModule } from '../../components/generation-selection.component';
 import { PaginatorModule } from '../../components/paginator.component';
 
@@ -14,20 +11,16 @@ import { PaginatorModule } from '../../components/paginator.component';
   templateUrl: './pokedex.component.html',
 })
 export class PokedexPageComponent implements OnInit {
-  pokemonState$: Observable<PokemonState | null> =
-    this.pokemonState.state$.pipe(
-      filter((state) => !!state),
-      tap((state) => console.log({ state }))
-    );
+  pokemonState$: Observable<PokemonState | null> = this.pokemonStore.state$;
 
-  constructor(private pokemonState: PokemonStateService) {}
+  constructor(private pokemonStore: PokemonStore) {}
 
   ngOnInit(): void {
-    this.pokemonState.loadPokemon();
+    this.pokemonStore.loadPokemon();
   }
 
   onPaginationChange(url: string) {
-    this.pokemonState.loadPokemon(undefined, url);
+    this.pokemonStore.loadPokemon(undefined, url);
   }
 }
 
