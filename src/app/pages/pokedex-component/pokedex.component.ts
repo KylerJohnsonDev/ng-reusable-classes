@@ -3,6 +3,7 @@ import { Component, NgModule, OnInit } from '@angular/core';
 import { filter, Observable, tap } from 'rxjs';
 import { PokemonCardModule } from 'src/app/components/pokemon-card.component';
 import { PokemonState, PokemonStore } from 'src/app/global-state/pokemon.store';
+import { PaginationActions } from 'src/app/models/api.model';
 import { GenerationSelectionModule } from '../../components/generation-selection.component';
 import { PaginatorModule } from '../../components/paginator.component';
 
@@ -19,8 +20,8 @@ export class PokedexPageComponent implements OnInit {
     this.pokemonStore.loadPokemon();
   }
 
-  onPaginationChange(url: string) {
-    this.pokemonStore.loadPokemon(undefined, url);
+  onPaginationChange(newPageIndex: PaginationActions) {
+    this.pokemonStore.loadPokemon(newPageIndex);
   }
 }
 

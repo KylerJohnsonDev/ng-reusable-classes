@@ -24,3 +24,8 @@ export interface GenerationOption {
   description: string;
   paginationOptions: PaginationOptions;
 }
+
+export enum PaginationActions {
+  forward = 'forward',
+  backward = 'backward',
+}

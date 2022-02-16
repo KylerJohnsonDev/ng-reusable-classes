@@ -29,6 +29,12 @@ export abstract class StateStoreBase<T> {
       }
       this.initialState = configuration.initialState;
       this.stateSubject$.next(configuration.initialState);
+    } else {
+      if (this.debug) {
+        const message =
+          'Warning: You did not pass initial state into the `super` constructor. State will be `null` until you explicitly use `setState`. It is recommended that you provide initial state in constructor.';
+        this.log(message, undefined, 'orangered');
+      }
     }
   }
 
@@ -146,6 +152,6 @@ export abstract class StateStoreBase<T> {
         oldState
       )}\nNew State: ${JSON.stringify(newState)}`;
     }
-    console.log(formattedMessage, `color: ${color ? color : 'orangered'}`);
+    console.log(formattedMessage, `color: ${color ? color : 'cyan'}`);
   }
 }

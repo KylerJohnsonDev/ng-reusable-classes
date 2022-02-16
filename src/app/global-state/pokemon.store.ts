@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { PokemonService } from '../http/pokemon.service';
 import {
   FetchPokemonApiResponse,
+  PaginationActions,
   PaginationOptions,
   PokemonSummary,
 } from '../models/api.model';
@@ -15,6 +16,10 @@ export interface PokemonState {
   nextPageUrl: string | null;
   previousPageUrl: string | null;
   errorMessage: string | null;
+  totalNumPages: number;
+  currentPage: number;
+  limit: number;
+  offset: number;
 }
 
 export const defaultState: PokemonState = {
@@ -24,6 +29,10 @@ export const defaultState: PokemonState = {
   nextPageUrl: null,
   previousPageUrl: null,
   errorMessage: null,
+  currentPage: 0,
+  limit: 24,
+  offset: 0,
+  totalNumPages: 1,
 };
 
 const storeConfiguration: StateStoreConfiguration<PokemonState> = {
@@ -40,23 +49,63 @@ export class PokemonStore extends StateStoreBase<PokemonState> {
     super(storeConfiguration);
   }
 
-  loadPokemon(
-    paginationOptions?: PaginationOptions,
-    paginationUrl?: string
-  ): void {
+  loadPokemon(paginationAction?: PaginationActions): void {
     this.setState({ isLoading: true });
+    const currentState = this.getStateCopy() ?? defaultState;
+    const paginationOptions: PaginationOptions = {
+      limit: currentState?.limit,
+      offset: this.calculatePaginationOffset(currentState, paginationAction),
+    };
     this.pokemonService
-      .fetchPokemon(paginationOptions, paginationUrl)
+      .fetchPokemon(paginationOptions)
       .subscribe((res: FetchPokemonApiResponse) => {
-        const state: PokemonState = {
+        const newState = {
+          currentState,
           isLoading: false,
           pokemon: formatPokemonResults(res.results),
           count: res.count,
-          nextPageUrl: res.next,
-          previousPageUrl: res.previous,
+          offset: res.results.length,
+          currentPage: this.calculateCurrentPageIndex(
+            currentState.currentPage,
+            paginationAction
+          ),
+          totalNumPages: currentState
+            ? Math.ceil(res.count / currentState.limit)
+            : 1,
           errorMessage: null,
         };
-        this.setState(state);
+        this.setState(newState);
       });
+  }
+
+  private calculatePaginationOffset(
+    currentState: PokemonState,
+    paginationAction?: PaginationActions
+  ): number {
+    if (!paginationAction) {
+      return currentState.currentPage * currentState.limit;
+    }
+    switch (paginationAction) {
+      case PaginationActions.backward:
+        return (currentState.currentPage - 1) * currentState.limit;
+      case PaginationActions.forward:
+        return (currentState.currentPage + 1) * currentState.limit;
+    }
+  }
+
+  private calculateCurrentPageIndex(
+    currentPageIndex: number,
+    paginationAction?: PaginationActions
+  ): number {
+    if (!paginationAction) {
+      return currentPageIndex;
+    }
+
+    switch (paginationAction) {
+      case PaginationActions.backward:
+        return currentPageIndex - 1;
+      case PaginationActions.forward:
+        return currentPageIndex + 1;
+    }
   }
 }
